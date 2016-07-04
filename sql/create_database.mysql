@@ -1,0 +1,22 @@
+
+DROP DATABASE playground;
+CREATE DATABASE playground;
+
+
+GRANT insert, update, select, alter, delete, lock tables, create, create temporary tables, drop on playground.* to playground@localhost identified by "playground";
+flush privileges;
+
+USE playground;
+
+DROP TABLE users;
+CREATE TABLE `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO users
+SET username = 'Carsten',
+password = 'test';
