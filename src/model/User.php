@@ -16,7 +16,7 @@ class User {
   public $user_id;
   // The messages object.
   private $messages;
-  // The database object
+  // The database object.
   private $database;
 
   /**

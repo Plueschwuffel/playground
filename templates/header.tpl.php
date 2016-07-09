@@ -5,15 +5,13 @@
 
         <?php
           // If the user is logged in
-          if (!empty($this->user->userIsLoggedIn()))
+          if (!empty($this->user_model->userIsLoggedIn()))
           {
-
             // Display add blog entry link
             print ' - <a href="index.php?action=add-blog-entry">Add blog entry</a>';
 
             // Display logout link
             print ' - <a href="index.php?action=logout">Logout</a>';
-
           }
           else {
             if ('login' != $_GET['action']) {

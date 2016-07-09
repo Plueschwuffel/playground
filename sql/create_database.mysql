@@ -20,3 +20,18 @@ CREATE TABLE `users` (
 INSERT INTO users
 SET username = 'Carsten',
 password = 'test';
+
+
+DROP TABLE blog_entries;
+CREATE TABLE `blog_entries` (
+  `blog_id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `body` text NOT NULL,
+  `user_id` int NOT NULL,
+  `created` int NOT NULL,
+  `modified` int NOT NULL,
+  PRIMARY KEY (`blog_id`),
+  KEY (`user_id`),
+  KEY (`created`),
+  KEY (`modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

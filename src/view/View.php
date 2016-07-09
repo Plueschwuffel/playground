@@ -19,7 +19,9 @@ class View {
   // Variable to handle the templates.
   private $templates;
   // The user model object
-  private $user;
+  private $user_model;
+  // The blog model object
+  private $blog_model;
   // The router controller object.
   private $router;
   // The messages model object.
@@ -28,12 +30,15 @@ class View {
 
   /**
    * View constructor.
-   * @param $user
+   * @param $user_model
+   * @param $blog_model
    * @param $router
+   * @param $messages
    */
-  public function __construct($user, $router, $messages)
+  public function __construct($user_model, $blog_model, $router, $messages)
   {
-    $this->user = $user;
+    $this->user_model = $user_model;
+    $this->blog_model = $blog_model;
     $this->router = $router;
     $this->messages = $messages;
   }
@@ -43,17 +48,51 @@ class View {
    */
   public function displayPage()
   {
-    $this->setTemplatesByAction();
     $templates = $this->getTemplates();
+    // @todo use a public variable.
     $messages = $this->messages->getMessages();
+    $variables = $this->preprocessPageVariables();
     require_once ('../templates/page.tpl.php');
+  }
+
+  /**
+   * Preprocess page variables for the templates.
+   */
+  private function preprocessPageVariables() {
+
+    $variables = array();
+
+    // @todo preprocess the variables.
+
+    // ----------------
+    // Blog variables.
+    // ----------------
+    // Blog title.
+    $variables['blog_title'] = '';
+    if (!empty($this->blog_model->current_blog_entry->title)) {
+      $variables['blog_title'] = trim($this->blog_model->current_blog_entry->title);
+    }
+
+    // Blog body.
+    $variables['blog_body'] = '';
+    if (!empty($this->blog_model->current_blog_entry->body)) {
+      $variables['blog_body'] = trim($this->blog_model->current_blog_entry->body);
+    }
+
+    // Blog id.
+    $variables['blog_id'] = '';
+    if (!empty($this->blog_model->current_blog_entry->blog_id)) {
+      $variables['blog_id'] = trim($this->blog_model->current_blog_entry->blog_id);
+    }
+
+    return $variables;
   }
 
 
   /**
-   * Preprocess the templates
+   * Select the templates to be displayed.
    */
-  public function setTemplatesByAction()
+  private function setTemplatesByAction()
   {
 
     // Reset the templates.
@@ -64,16 +103,23 @@ class View {
 
       // User login form.
       case 'login':
-        if (!$this->user->userIsLoggedIn()) {
+        if (!$this->user_model->userIsLoggedIn()) {
           $this->templates['content'] = 'login_form.tpl.php';
         }
         break;
 
       // Add blog entry form.
+      // Edit blog entry form.
       case 'add-blog-entry':
-        if ($this->user->userIsLoggedIn()) {
+      case 'edit-blog-entry':
+        if ($this->user_model->userIsLoggedIn()) {
           $this->templates['content'] = 'add_blog_entry_form.tpl.php';
         }
+        break;
+
+      // Blog entry detail page.
+      case 'blog-detail':
+        $this->templates['content'] = 'blog_detail.tpl.php';
         break;
 
     }
@@ -90,6 +136,8 @@ class View {
    * @return mixed
    */
   private function getTemplates() {
+    // Select the templates to be displayed by the current action.
+    $this->setTemplatesByAction();
     return $this->templates;
   }
   

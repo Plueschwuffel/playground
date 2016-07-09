@@ -43,17 +43,20 @@ class Router {
 
     switch ($this->action) {
 
+      // User login and logout.
       case 'login':
       case 'logout':
         $this->user_controller->handleUserAction($this->action);
         break;
 
+      // Add, edit or display a blog entry.
+      // @todo delete
       case 'add-blog-entry':
-        $this->blog_controller->handleBlogAction($this->action);
-        break;
-
+      case 'edit-blog-entry':
+      case 'blog-detail':
+      // List the blog entries.
       default:
-
+        $this->blog_controller->handleBlogAction($this->action);
         break;
 
     }
@@ -64,8 +67,7 @@ class Router {
    * Set the current action.
    */
   private function setAction() {
-    $action = $this->getAction();
-    $this->action = $action;
+    $this->action = $this->getAction();
   }
 
 
@@ -80,7 +82,5 @@ class Router {
     }
   }
   
-
-
 
 }

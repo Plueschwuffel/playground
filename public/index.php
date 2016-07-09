@@ -9,7 +9,7 @@ $messages = new \Playground\model\Messages();
 // New user model object.
 $user_model = new \Playground\model\User($database, $messages);
 // New blog model.
-$blog_model = new \Playground\model\Blog();
+$blog_model = new \Playground\model\Blog($user_model, $database, $messages);
 // New blog controller.
 $blog_controller = new \Playground\controller\Blog($blog_model, $messages);
 // New user controller object.
@@ -17,7 +17,7 @@ $user_controller = new \Playground\controller\User($user_model, $messages);
 // New router controller object.
 $router = new \Playground\controller\Router($user_controller, $blog_controller);
 // New view object.
-$view = new \Playground\view\View($user_model, $router, $messages);
+$view = new \Playground\view\View($user_model, $blog_model, $router, $messages);
 
 $view->displayPage();
 

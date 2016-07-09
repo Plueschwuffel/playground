@@ -15,31 +15,38 @@ class Database {
 
   /**
    * Database constructor.
-   * @param $dbInstance
    */
   public function __construct() {
     
+  }
+
+
+  /**
+   * Database destructor.
+   */
+  public function __destruct() {
+    $this->disconnect();
   }
 
   /**
    * Connect to the database.
    */
   public function connect() {
+    if (!$this->dbConnectionExists()) {
+      // Get the settings.
+      $settings = new Settings();
+      $this->dbh = mysqli_connect(
+        $settings->database_credentials['host'],
+        $settings->database_credentials['db_user'],
+        $settings->database_credentials['db_pass'],
+        $settings->database_credentials['db_name']
+      );
 
-    // Get the settings.
-    $settings = new Settings();
-
-    $this->dbh = mysqli_connect(
-      $settings->database_credentials['host'],
-      $settings->database_credentials['db_user'],
-      $settings->database_credentials['db_pass'],
-      $settings->database_credentials['db_name']
-    );
-
-    // Check connection
-    if (mysqli_connect_errno())
-    {
-      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      // Check connection
+      if (mysqli_connect_errno())
+      {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
     }
   }
 
@@ -64,28 +71,35 @@ class Database {
 
   /**
    * Execute a query.
+   *
    * @param $query
+   * @return bool|\mysqli_result
    */
   public function execute($query) {
-    if (!$this->dbConnectionExists) {
+    if (!$this->dbConnectionExists()) {
       $this->connect();
     }
     return mysqli_query($this->dbh, $query);
   }
 
   /**
-   * Escape a string for database usage.
-   * @param $string
+   * Get the last insert id.
+   * @return mixed
    */
-  public function escapeString($string) {
-    return $this->dbh->mysqli_real_escape_string($string);
+  public function lastInsertId() {
+    return $this->dbh->insert_id;
   }
 
-
-  public function __shutdown() {
-    if ($this->dbConnectionExists()) {
-      $this->disconnect();
+  /**
+   * Escape a string for database usage.
+   * @param $string
+   * @return string
+   */
+  public function escapeString($string) {
+    if (!$this->dbConnectionExists()) {
+      $this->connect();
     }
+    return mysqli_real_escape_string($this->dbh, $string);
   }
 
 }
